@@ -1,30 +1,23 @@
 
-package com.alpha.adminService.Entity;
+package com.alpha.theaterService.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+public class MovieResponseDTO {
 
-@Entity
-public class Movie {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long movieId;
     private String title;
     private String description;
-    @Column(name = "movie_cast")
     private String cast;
     private String language;
 
     // Default Constructor
-    public Movie() {
+    public MovieResponseDTO() {
     }
 
     // Parameterized Constructor
-    public Movie(String title, String description, String cast, String language) {
+    public MovieResponseDTO(Long movieId, String title,
+                            String description, String cast,
+                            String language) {
+        this.movieId = movieId;
         this.title = title;
         this.description = description;
         this.cast = cast;
@@ -32,13 +25,12 @@ public class Movie {
     }
 
     // Getters and Setters
-
-    public long getId() {
-        return id;
+    public Long getMovieId() {
+        return movieId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setMovieId(Long movieId) {
+        this.movieId = movieId;
     }
 
     public String getTitle() {
@@ -73,11 +65,10 @@ public class Movie {
         this.language = language;
     }
 
-    // toString Method
     @Override
     public String toString() {
-        return "Movie{" +
-                "id=" + id +
+        return "MovieResponseDTO{" +
+                "movieId=" + movieId +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", cast='" + cast + '\'' +

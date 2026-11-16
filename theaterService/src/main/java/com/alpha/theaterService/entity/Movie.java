@@ -1,57 +1,43 @@
+
 package com.alpha.theaterService.entity;
 
-
-import jakarta.persistence.*;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
-@Table(name = "movies")
 public class Movie {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     private String title;
-
     private String description;
-
-    @Column(name = "cast_members")
+    @Column(name = "movie_cast")
     private String cast;
+    private String language;
 
-    private double duration;
-
-    @ElementCollection
-    @CollectionTable(
-        name = "movie_languages",
-        joinColumns = @JoinColumn(name = "movie_id")
-    )
-    @Column(name = "language")
-    private List<String> languages;
-
-    // No-argument constructor
+    // Default Constructor
     public Movie() {
     }
 
-    // Parameterized constructor
-    public Movie(Long id, String title, String description,
-            String cast, double duration, List<String> languages) {
-
-        this.id = id;
+    // Parameterized Constructor
+    public Movie(String title, String description, String cast, String language) {
         this.title = title;
         this.description = description;
         this.cast = cast;
-        this.duration = duration;
-        this.languages = languages;
+        this.language = language;
     }
 
     // Getters and Setters
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -79,20 +65,23 @@ public class Movie {
         this.cast = cast;
     }
 
-    public double getDuration() {
-        return duration;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setDuration(double duration) {
-        this.duration = duration;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public List<String> getLanguages() {
-        return languages;
-    }
-
-    public void setLanguages(List<String> languages) {
-        this.languages = languages;
+    // toString Method
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", cast='" + cast + '\'' +
+                ", language='" + language + '\'' +
+                '}';
     }
 }
-

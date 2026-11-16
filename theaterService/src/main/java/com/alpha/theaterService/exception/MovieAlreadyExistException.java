@@ -1,4 +1,4 @@
-package com.alpha.adminService.Exception;
+package com.alpha.theaterService.exception;
 
 public class MovieAlreadyExistException extends RuntimeException {
 

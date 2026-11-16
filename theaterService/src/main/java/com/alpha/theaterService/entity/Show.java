@@ -18,7 +18,7 @@ public class Show {
     @ManyToOne
     @JoinColumn(name = "theater_id")
     private Theater theater;
-
+    //date,time,screeno,theater
     private String title;
     private String description;
     private double duration;

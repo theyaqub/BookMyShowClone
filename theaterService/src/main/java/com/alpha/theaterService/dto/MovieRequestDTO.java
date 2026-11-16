@@ -1,5 +1,5 @@
 
-package com.alpha.adminService.dto;
+package com.alpha.theaterService.dto;
 
 public class MovieRequestDTO {
 
