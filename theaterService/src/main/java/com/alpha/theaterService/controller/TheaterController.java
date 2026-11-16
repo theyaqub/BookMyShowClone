@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.alpha.theaterService.dto.ResponseStructure;
+import com.alpha.theaterService.dto.ShowRequestDto;
 import com.alpha.theaterService.entity.Movie;
+import com.alpha.theaterService.entity.Show;
 import com.alpha.theaterService.entity.Theater;
 import com.alpha.theaterService.service.TheaterServices;
 
@@ -39,6 +41,11 @@ public class TheaterController {
 	@GetMapping("/theater/findAllMovie")
 	public ResponseEntity<ResponseStructure<List<Movie>>> getAllMovie() {
 		return theaterServices.allMovieService();
+	}
+	
+	@PostMapping("/theater/addNewShow")
+	public ResponseEntity<ResponseStructure<Show>> addNewShow(@RequestBody ShowRequestDto dto ) {
+		return theaterServices.addNewShowService(dto);
 	}
 	
 }

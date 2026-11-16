@@ -1,25 +1,26 @@
 package com.alpha.theaterService.service;
 
 import java.util.List;
-
-import org.hibernate.annotations.Audited;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.alpha.theaterService.dto.MovieRequestDTO;
 import com.alpha.theaterService.dto.MovieResponseDTO;
 import com.alpha.theaterService.dto.ResponseStructure;
+import com.alpha.theaterService.dto.ShowRequestDto;
 import com.alpha.theaterService.entity.Address;
 import com.alpha.theaterService.entity.Movie;
+import com.alpha.theaterService.entity.Show;
 import com.alpha.theaterService.entity.Theater;
 import com.alpha.theaterService.exception.MovieAlreadyExistException;
 import com.alpha.theaterService.exception.MovieNotFoundException;
+import com.alpha.theaterService.exception.ShowAlreadyExistException;
 import com.alpha.theaterService.exception.TheaterAlreadyExistException;
 import com.alpha.theaterService.exception.TheaterNotFoundException;
 import com.alpha.theaterService.repo.AddressRepository;
+import com.alpha.theaterService.repo.ShowRepository;
 import com.alpha.theaterService.repo.TheaterRepository;
 
 @Service
@@ -112,21 +113,21 @@ public class TheaterServices {
 		movieResponseDTO.setDescription(movie.getDescription());
 		movieResponseDTO.setCast(movie.getCast());
 		movieResponseDTO.setLanguage(movie.getLanguage());
-		rs.setStatuscode(HttpStatus.FOUND.value());
+		rs.setStatuscode(HttpStatus.OK.value());
         rs.setMessage("Movie Found");
         rs.setData(movieResponseDTO);
 
-        return new ResponseEntity<ResponseStructure<MovieResponseDTO>>(rs,HttpStatus.FOUND);
+        return new ResponseEntity<ResponseStructure<MovieResponseDTO>>(rs,HttpStatus.OK);
 		
 	}
 
 	public ResponseEntity<ResponseStructure<List<Movie>>> allMovieService() {
 		ResponseStructure<List<Movie>> rs=new ResponseStructure<List<Movie>>(); 
 		List<Movie> allMovie = addMovieRepo.findAll();
-		rs.setStatuscode(HttpStatus.FOUND.value());
+		rs.setStatuscode(HttpStatus.OK.value());
 		rs.setMessage("sucess");
 		rs.setData(allMovie);
-		return new ResponseEntity<ResponseStructure<List<Movie>>>(rs,HttpStatus.FOUND);
+		return new ResponseEntity<ResponseStructure<List<Movie>>>(rs,HttpStatus.OK);
 		
 	}
 
@@ -140,11 +141,51 @@ public class TheaterServices {
 		movieResponseDTO.setCast(movie.getCast());
 		movieResponseDTO.setLanguage(movie.getLanguage());
 		addMovieRepo.deleteById(id);
-		rs.setStatuscode(HttpStatus.FOUND.value());
+		rs.setStatuscode(HttpStatus.OK.value());
         rs.setMessage("Movie Found and deleted");
         rs.setData(movieResponseDTO);
 
-        return new ResponseEntity<ResponseStructure<MovieResponseDTO>>(rs,HttpStatus.FOUND);
+        return new ResponseEntity<ResponseStructure<MovieResponseDTO>>(rs,HttpStatus.OK);
+		
+	}
+	
+	
+	@Autowired
+	private ShowRepository repository; 
+	public ResponseEntity<ResponseStructure<Show>> addNewShowService(ShowRequestDto dto) {
+		
+		ResponseStructure<Show> rs=new ResponseStructure<Show>();
+		// Find theater
+		Theater theater = theaterRepository.findById(dto.getTheaterId())
+		        .orElseThrow(() -> new TheaterNotFoundException());
+		// Find movie
+		Movie movie = addMovieRepo.findById(dto.getMovieId())
+		        .orElseThrow(() -> new MovieNotFoundException());
+		boolean exists = repository
+				.existsByTheater_IdAndShowDateAndShowTimeAndScreenNumber(
+				        dto.getTheaterId(),
+				        dto.getShowDate(),
+				        dto.getShowTime(),
+				        dto.getScreenNumber()
+				    );
+
+			if (exists) {
+			    throw new ShowAlreadyExistException();
+			}
+		// Create a new show
+		Show show = new Show();
+
+		show.setMovie(movie);
+		show.setTheater(theater);
+		show.setShowDate(dto.getShowDate());
+		show.setShowTime(dto.getShowTime());
+		show.setScreenNumber(dto.getScreenNumber());
+		repository.save(show);
+		
+		rs.setStatuscode(HttpStatus.CREATED.value());
+		rs.setMessage("movie :"+show.getMovie().getTitle()+" added");
+		rs.setData(show);
+		return new ResponseEntity<ResponseStructure<Show>>(rs,HttpStatus.CREATED);
 		
 	}
 

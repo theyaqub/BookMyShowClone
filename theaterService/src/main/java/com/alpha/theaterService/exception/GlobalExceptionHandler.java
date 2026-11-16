@@ -13,11 +13,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(TheaterAlreadyExistException.class)
 	public ResponseEntity<ResponseStructure<String>> TheaterAlreadyExistExceptionHandler() {
 		ResponseStructure<String> rs = new ResponseStructure<String>();
-		rs.setStatuscode(HttpStatus.ALREADY_REPORTED.value());
+		rs.setStatuscode(HttpStatus.CONFLICT.value());
 		rs.setMessage("Theater Already Exist");
 		rs.setData("Theater Already Exist");
 		
-		return new ResponseEntity<ResponseStructure<String>>(rs,HttpStatus.FOUND);
+		return new ResponseEntity<ResponseStructure<String>>(rs,HttpStatus.CONFLICT);
 	}
 	
 	@ExceptionHandler(TheaterNotFoundException.class)
@@ -46,4 +46,15 @@ public class GlobalExceptionHandler {
 		rs.setData("movie Not Found");
 		return new ResponseEntity<ResponseStructure<String>>(rs,HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler(ShowAlreadyExistException.class)
+	public ResponseEntity<ResponseStructure<String>> ShowAlreadyExistExceptionHandler() {
+		ResponseStructure<String> rs= new ResponseStructure<String>();
+		rs.setStatuscode(HttpStatus.CONFLICT.value());
+		rs.setMessage("Show already exists");
+		rs.setData("Show already exists");
+		return new ResponseEntity<ResponseStructure<String>>(rs,HttpStatus.CONFLICT);
+	}
+	
+	
 }
