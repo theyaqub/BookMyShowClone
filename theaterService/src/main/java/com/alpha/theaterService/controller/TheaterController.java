@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.alpha.theaterService.dto.ResponseStructure;
 import com.alpha.theaterService.dto.ShowRequestDto;
+import com.alpha.theaterService.dto.UpdateShowDto;
 import com.alpha.theaterService.entity.Movie;
 import com.alpha.theaterService.entity.Show;
 import com.alpha.theaterService.entity.Theater;
@@ -46,6 +48,21 @@ public class TheaterController {
 	@PostMapping("/theater/addNewShow")
 	public ResponseEntity<ResponseStructure<Show>> addNewShow(@RequestBody ShowRequestDto dto ) {
 		return theaterServices.addNewShowService(dto);
+	}
+	
+	@GetMapping("/theater/FindAllShowPlaying")
+	public ResponseEntity<ResponseStructure<List<Show>>> findAllShow(@RequestParam long theaterid) {
+		return theaterServices.findallShowService(theaterid);
+	}
+	
+	@GetMapping("/theater/findShowById")
+	public ResponseEntity<ResponseStructure<Show>> findShowById(@RequestParam long showId) {
+		return theaterServices.findShowByIdService(showId);
+	}
+	
+	@PatchMapping("/theater/updateShow")
+	public ResponseEntity<ResponseStructure<Show>> updateShowById(@RequestBody UpdateShowDto d) {
+		return theaterServices.updateShowByIdService(d);
 	}
 	
 }

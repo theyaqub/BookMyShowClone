@@ -16,4 +16,9 @@ public interface ShowRepository
 	        LocalTime showTime,
 	        int screenNumber
 	);
+	public boolean existsByShowDateAndShowTimeAndScreenNumber(
+			LocalDate showDate,
+			LocalTime showTime,
+			int screenNumber
+			);
 }

@@ -55,6 +55,14 @@ public class GlobalExceptionHandler {
 		rs.setData("Show already exists");
 		return new ResponseEntity<ResponseStructure<String>>(rs,HttpStatus.CONFLICT);
 	}
+	@ExceptionHandler(ShowNotFoundException.class)
+	public ResponseEntity<ResponseStructure<String>> ShowNotFoundExceptionHandler() {
+		ResponseStructure<String> rs= new ResponseStructure<String>();
+		rs.setStatuscode(HttpStatus.CONFLICT.value());
+		rs.setMessage("Show Not exists");
+		rs.setData("Show Not exists");
+		return new ResponseEntity<ResponseStructure<String>>(rs,HttpStatus.CONFLICT);
+	}
 	
 	
 }

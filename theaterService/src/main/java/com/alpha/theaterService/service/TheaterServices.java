@@ -10,6 +10,7 @@ import com.alpha.theaterService.dto.MovieRequestDTO;
 import com.alpha.theaterService.dto.MovieResponseDTO;
 import com.alpha.theaterService.dto.ResponseStructure;
 import com.alpha.theaterService.dto.ShowRequestDto;
+import com.alpha.theaterService.dto.UpdateShowDto;
 import com.alpha.theaterService.entity.Address;
 import com.alpha.theaterService.entity.Movie;
 import com.alpha.theaterService.entity.Show;
@@ -186,6 +187,55 @@ public class TheaterServices {
 		rs.setMessage("movie :"+show.getMovie().getTitle()+" added");
 		rs.setData(show);
 		return new ResponseEntity<ResponseStructure<Show>>(rs,HttpStatus.CREATED);
+		
+	}
+
+	public ResponseEntity<ResponseStructure<List<Show>>> findallShowService(long theaterid) {
+		Theater theater = theaterRepository.findById(theaterid)
+		        .orElseThrow(() -> new TheaterNotFoundException());
+		List<Show> allShows=theater.getAllPlayingShows();
+		
+		ResponseStructure<List<Show>> rs=new ResponseStructure<List<Show>>();
+		rs.setStatuscode(HttpStatus.OK.value());
+		rs.setMessage("Success");
+		rs.setData(allShows);
+		
+		return new ResponseEntity<ResponseStructure<List<Show>>>(rs,HttpStatus.OK);
+
+		
+	}
+		
+	
+	public ResponseEntity<ResponseStructure<Show>> findShowByIdService(long showId) {
+		Show show = repository.findById(showId).orElseThrow(()->new ShowAlreadyExistException());
+		ResponseStructure<Show>rs =new ResponseStructure<Show>();
+		rs.setStatuscode(HttpStatus.OK.value());
+		rs.setMessage("success");
+		rs.setData(show);
+		return new ResponseEntity<ResponseStructure<Show>>(rs,HttpStatus.OK);
+		
+	}
+
+	public ResponseEntity<ResponseStructure<Show>> updateShowByIdService(UpdateShowDto d) {
+		
+		boolean exists=repository.existsByShowDateAndShowTimeAndScreenNumber(d.getShowDate(), d.getShowTime(), d.getScreenNumber());
+		if(exists) {
+			throw new ShowAlreadyExistException();
+		}
+		Show show = repository.findById(d.getId()).orElseThrow(()->new ShowAlreadyExistException());
+		ResponseStructure<Show>rs =new ResponseStructure<Show>();		
+		show.setScreenNumber(d.getScreenNumber());
+		show.setShowDate(d.getShowDate());
+		show.setShowTime(d.getShowTime());
+		
+		Show savedShow=repository.save(show);
+		
+		rs.setStatuscode(HttpStatus.OK.value());
+		rs.setMessage("success");
+		rs.setData(savedShow);
+		
+		return new ResponseEntity<ResponseStructure<Show>>(rs,HttpStatus.OK);
+		
 		
 	}
 
