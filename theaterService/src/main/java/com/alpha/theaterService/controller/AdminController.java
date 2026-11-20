@@ -44,4 +44,6 @@ public class AdminController {
 	public ResponseEntity<ResponseStructure<MovieResponseDTO>> deleteMoviebyId(@RequestParam long id) {
 		 return theaterServices.deleteMoviebyId(id);
 	}
+	
+	
 }

@@ -239,5 +239,19 @@ public class TheaterServices {
 		
 	}
 
+	public ResponseEntity<ResponseStructure<List<Movie>>> findMovieByNameService(String movieName) {
+
+	    List<Movie> movie =
+	            addMovieRepo.findByTitleContainingIgnoreCase(movieName.trim());
+
+	    ResponseStructure<List<Movie>> rs = new ResponseStructure<>();
+
+	    rs.setStatuscode(HttpStatus.OK.value());
+	    rs.setMessage("success");
+	    rs.setData(movie);
+
+	    return new ResponseEntity<ResponseStructure<List<Movie>>>(rs,HttpStatus.OK);
+	}
+
 
 }

@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.alpha.customerService.dto.CustomerDTO;
+import com.alpha.customerService.dto.MovieResponseDTO;
 import com.alpha.customerService.entity.Customer;
 import com.alpha.customerService.exception.CustomerAlreadyExistException;
 import com.alpha.customerService.repo.CustomerRepo;
@@ -57,6 +59,20 @@ public class CustomerService {
 		rs.setData(c);
 		return new ResponseEntity<ResponseStructure<Customer>>(rs,HttpStatus.ACCEPTED);
 	
+	}
+
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	public Object findMovieByNameService(String movieName) {
+		
+		System.out.println(movieName);
+		
+		String url="http://localhost:8080/customer/findMovieByName?MovieName="+movieName;
+		
+		Object movies=restTemplate.getForObject(url, Object.class);
+		System.out.println(movies);
+		return movies;
 	}
 
 }

@@ -1,4 +1,6 @@
 package com.alpha.customerService.Controller;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.alpha.customerService.Service.CustomerService;
 import com.alpha.customerService.dto.CustomerDTO;
+import com.alpha.customerService.dto.MovieResponseDTO;
 import com.alpha.customerService.entity.Customer;
 import com.alpha.customerService.response.ResponseStructure;
+
 
 
 @RestController
@@ -36,5 +40,10 @@ public class CustomerController {
 	@DeleteMapping("/Customer/delete")
 	public ResponseEntity<ResponseStructure<Customer>> deleteCustomer(@RequestParam long id) {
 		 return CustomerService.deleteCustomerById(id);
+	}
+	
+	@GetMapping("/customer/findMovieByName")
+	public Object findMovieByname(@RequestParam String MovieName) {
+		return CustomerService.findMovieByNameService(MovieName);
 	}
 }

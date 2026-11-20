@@ -65,4 +65,8 @@ public class TheaterController {
 		return theaterServices.updateShowByIdService(d);
 	}
 	
+	@GetMapping("/customer/findMovieByName")
+	public ResponseEntity<ResponseStructure<List<Movie>>> findMovieByname(@RequestParam String MovieName) {
+		return  theaterServices.findMovieByNameService(MovieName);
+	}
 }
