@@ -13,6 +13,9 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             Long showId,
             SeatStatus status
     );
+	List<Seat> findByShow_Id(
+			Long showId
+			);
 
     List<Seat> findByShow_IdAndCategory(
             Long showId,
@@ -24,4 +27,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             SeatStatus status,
             SeatCategory category
     );
+
+	
 }

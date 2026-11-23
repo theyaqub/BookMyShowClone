@@ -18,6 +18,7 @@ import com.alpha.theaterService.dto.ResponseStructure;
 import com.alpha.theaterService.dto.ShowRequestDto;
 import com.alpha.theaterService.dto.UpdateShowDto;
 import com.alpha.theaterService.entity.Movie;
+import com.alpha.theaterService.entity.Seat;
 import com.alpha.theaterService.entity.Show;
 import com.alpha.theaterService.entity.Theater;
 import com.alpha.theaterService.service.TheaterServices;
@@ -99,5 +100,9 @@ public class TheaterController {
                 response,
                 HttpStatus.CREATED
         );
+	}
+	@GetMapping("/theater/selectSeat")
+	public ResponseEntity<ResponseStructure<List<Seat>>> selectSeats(@RequestParam long showId) {
+		return theaterServices.availableSeats(showId);
 	}
 }

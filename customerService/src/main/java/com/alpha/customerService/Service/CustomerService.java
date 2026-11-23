@@ -1,6 +1,7 @@
 package com.alpha.customerService.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.alpha.customerService.Controller.Seat;
 import com.alpha.customerService.dto.CustomerDTO;
 import com.alpha.customerService.dto.MovieResponseDTO;
 import com.alpha.customerService.entity.Customer;
@@ -96,6 +98,11 @@ public class CustomerService {
 	            );
 
 	    return response.getBody();
+	}
+
+	public Object SelectSeats(long showId) {
+		// TODO Auto-generated method stub
+		String url="";
 	}
 
 }

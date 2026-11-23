@@ -26,6 +26,7 @@ import com.alpha.theaterService.exception.ShowAlreadyExistException;
 import com.alpha.theaterService.exception.TheaterAlreadyExistException;
 import com.alpha.theaterService.exception.TheaterNotFoundException;
 import com.alpha.theaterService.repo.AddressRepository;
+import com.alpha.theaterService.repo.SeatRepository;
 import com.alpha.theaterService.repo.ShowRepository;
 import com.alpha.theaterService.repo.TheaterRepository;
 
@@ -388,5 +389,20 @@ public class TheaterServices {
 
 	    return rs;
 	}
+	
+	@Autowired
+	private SeatRepository seatRepository;
+	public ResponseEntity<ResponseStructure<List<Seat>>> availableSeats(long showId) {
+		
+		List<Seat> listSeats=seatRepository.findByShow_Id(showId);
+		ResponseStructure<List<Seat>> rs=new ResponseStructure<List<Seat>>();
+		
+		rs.setData(listSeats);
+		rs.setMessage("List of Seats");
+		rs.setStatuscode(HttpStatus.OK.value());
+		
+		return new ResponseEntity<ResponseStructure<List<Seat>>>(rs,HttpStatus.OK);
+	}
+
 
 }
