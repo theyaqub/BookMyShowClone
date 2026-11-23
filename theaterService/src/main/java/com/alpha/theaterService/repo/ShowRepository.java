@@ -3,6 +3,7 @@ package com.alpha.theaterService.repo;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -21,4 +22,10 @@ public interface ShowRepository
 			LocalTime showTime,
 			int screenNumber
 			);
+	
+	 public List<Show> findByMovie_TitleContainingIgnoreCaseAndMovie_LanguageIgnoreCaseAndShowDate(
+	            String movieName,
+	            String language,
+	            LocalDate showDate
+	    );
 }

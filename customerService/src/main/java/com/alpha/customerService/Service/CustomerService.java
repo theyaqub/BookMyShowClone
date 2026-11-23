@@ -1,5 +1,6 @@
 package com.alpha.customerService.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,28 @@ public class CustomerService {
 		Object movies=restTemplate.getForObject(url, Object.class);
 		System.out.println(movies);
 		return movies;
+	}
+	
+	public ResponseStructure buyTicketsService(
+	        String movieName,
+	        String language,
+	        LocalDate date) {
+
+	    String url = "http://localhost:8080/theater/findShows"
+	            + "?movieName={movieName}"
+	            + "&language={language}"
+	            + "&date={date}";
+
+	    ResponseEntity<ResponseStructure> response =
+	            restTemplate.getForEntity(
+	                    url,
+	                    ResponseStructure.class,
+	                    movieName,
+	                    language,
+	                    date
+	            );
+
+	    return response.getBody();
 	}
 
 }

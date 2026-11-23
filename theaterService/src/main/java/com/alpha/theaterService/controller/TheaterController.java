@@ -1,8 +1,10 @@
 package com.alpha.theaterService.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,8 +67,23 @@ public class TheaterController {
 		return theaterServices.updateShowByIdService(d);
 	}
 	
-	@GetMapping("/customer/findMovieByName")
+	@GetMapping("/theater/findMovieByName")
 	public ResponseEntity<ResponseStructure<List<Movie>>> findMovieByname(@RequestParam String MovieName) {
 		return  theaterServices.findMovieByNameService(MovieName);
+	}
+	
+	@GetMapping("theater/findShows")
+	public ResponseEntity<ResponseStructure<List<Show>>> findShows(
+	        @RequestParam String movieName,
+	        @RequestParam String language,
+	        @RequestParam
+	        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	        LocalDate date) {
+		
+	    return ResponseEntity.ok(
+	            theaterServices.findShowsByMovieDetails(
+	                    movieName, language, date
+	            )
+	    );
 	}
 }

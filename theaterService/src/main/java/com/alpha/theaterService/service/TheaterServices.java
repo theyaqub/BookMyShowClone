@@ -1,5 +1,6 @@
 package com.alpha.theaterService.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -253,5 +254,26 @@ public class TheaterServices {
 	    return new ResponseEntity<ResponseStructure<List<Movie>>>(rs,HttpStatus.OK);
 	}
 
+	public ResponseStructure<List<Show>> findShowsByMovieDetails(
+	        String movieName,
+	        String language,
+	        LocalDate date) {
+
+	    List<Show> shows =
+	            repository
+	            .findByMovie_TitleContainingIgnoreCaseAndMovie_LanguageIgnoreCaseAndShowDate(
+	                    movieName.trim(),
+	                    language.trim(),
+	                    date
+	            );
+
+	    ResponseStructure<List<Show>> rs = new ResponseStructure<>();
+
+	    rs.setStatuscode(HttpStatus.OK.value());
+	    rs.setMessage("Shows fetched successfully");
+	    rs.setData(shows);
+
+	    return rs;
+	}
 
 }

@@ -3,26 +3,15 @@ package com.alpha.customerService.response;
 
 public class ResponseStructure<T> {
 
-    private int statusCode;
+    private Integer statusCode;
     private String message;
     private T data;
 
-    public ResponseStructure() {
-        super();
-    }
-
-    public ResponseStructure(int statusCode, String message, T data) {
-        super();
-        this.statusCode = statusCode;
-        this.message = message;
-        this.data = data;
-    }
-
-    public int getStatusCode() {
+    public Integer getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(int statusCode) {
+    public void setStatusCode(Integer statusCode) {
         this.statusCode = statusCode;
     }
 
@@ -41,4 +30,5 @@ public class ResponseStructure<T> {
     public void setData(T data) {
         this.data = data;
     }
+
 }
