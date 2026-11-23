@@ -2,15 +2,19 @@ package com.alpha.theaterService.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Show {
@@ -33,6 +37,11 @@ public class Show {
     @ManyToOne
     @JoinColumn(name = "theater_id")
     private Theater theater;
+    @JsonIgnore
+    @OneToMany(mappedBy = "show",
+               cascade = CascadeType.ALL,
+               orphanRemoval = true)
+    private List<Seat> listSeats = new ArrayList<>();
 
     // Getters and Setters
 
@@ -83,4 +92,14 @@ public class Show {
     public void setTheater(Theater theater) {
         this.theater = theater;
     }
+
+	public void setListSeats(List<Seat> seats) {
+		listSeats=seats;
+		
+	}
+
+	public List<Seat> getListSeats() {
+		return listSeats;
+	}
+
 }

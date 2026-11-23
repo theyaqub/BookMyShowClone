@@ -15,10 +15,20 @@ public class ShowRequestDto {
     private LocalTime showTime;
 
     private int screenNumber;
+    
+    private int seatCapacity;
 
     // Getters and Setters
 
-    public long getMovieId() {
+    public int getSeatCapacity() {
+		return seatCapacity;
+	}
+
+	public void setSeatCapacity(int seatCapacity) {
+		this.seatCapacity = seatCapacity;
+	}
+
+	public long getMovieId() {
         return movieId;
     }
 

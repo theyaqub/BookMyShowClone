@@ -1,7 +1,12 @@
 
 package com.alpha.theaterService.entity;
 
+import com.alpha.theaterService.enums.SeatCategory;
+import com.alpha.theaterService.enums.SeatStatus;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,22 +23,23 @@ public class Seat {
     private Long id;
 
     private String seatNo;
-
-    private String category;
-
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private SeatCategory category;
+    @Enumerated(EnumType.STRING)
+    private SeatStatus status;
 
     @ManyToOne
+    @JoinColumn(name = "show_id")
     private Show show;
 
     public Seat() {
     }
 
-    public Seat(String seatNo, String category,
-                String status, Show show) {
+    public Seat(String seatNo, SeatCategory category2,
+                SeatStatus available, Show show) {
         this.seatNo = seatNo;
-        this.category = category;
-        this.status = status;
+        this.category = category2;
+        this.status = available;
         this.show = show;
     }
 
@@ -53,19 +59,19 @@ public class Seat {
         this.seatNo = seatNo;
     }
 
-    public String getCategory() {
+    public SeatCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(SeatCategory category) {
         this.category = category;
     }
 
-    public String getStatus() {
+    public SeatStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(SeatStatus status) {
         this.status = status;
     }
 

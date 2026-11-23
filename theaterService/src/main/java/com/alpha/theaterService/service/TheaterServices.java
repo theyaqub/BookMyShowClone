@@ -1,6 +1,7 @@
 package com.alpha.theaterService.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,11 @@ import com.alpha.theaterService.dto.ShowRequestDto;
 import com.alpha.theaterService.dto.UpdateShowDto;
 import com.alpha.theaterService.entity.Address;
 import com.alpha.theaterService.entity.Movie;
+import com.alpha.theaterService.entity.Seat;
 import com.alpha.theaterService.entity.Show;
 import com.alpha.theaterService.entity.Theater;
+import com.alpha.theaterService.enums.SeatCategory;
+import com.alpha.theaterService.enums.SeatStatus;
 import com.alpha.theaterService.exception.MovieAlreadyExistException;
 import com.alpha.theaterService.exception.MovieNotFoundException;
 import com.alpha.theaterService.exception.ShowAlreadyExistException;
@@ -24,6 +28,8 @@ import com.alpha.theaterService.exception.TheaterNotFoundException;
 import com.alpha.theaterService.repo.AddressRepository;
 import com.alpha.theaterService.repo.ShowRepository;
 import com.alpha.theaterService.repo.TheaterRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class TheaterServices {
@@ -154,42 +160,42 @@ public class TheaterServices {
 	
 	@Autowired
 	private ShowRepository repository; 
-	public ResponseEntity<ResponseStructure<Show>> addNewShowService(ShowRequestDto dto) {
-		
-		ResponseStructure<Show> rs=new ResponseStructure<Show>();
-		// Find theater
-		Theater theater = theaterRepository.findById(dto.getTheaterId())
-		        .orElseThrow(() -> new TheaterNotFoundException());
-		// Find movie
-		Movie movie = addMovieRepo.findById(dto.getMovieId())
-		        .orElseThrow(() -> new MovieNotFoundException());
-		boolean exists = repository
-				.existsByTheater_IdAndShowDateAndShowTimeAndScreenNumber(
-				        dto.getTheaterId(),
-				        dto.getShowDate(),
-				        dto.getShowTime(),
-				        dto.getScreenNumber()
-				    );
-
-			if (exists) {
-			    throw new ShowAlreadyExistException();
-			}
-		// Create a new show
-		Show show = new Show();
-
-		show.setMovie(movie);
-		show.setTheater(theater);
-		show.setShowDate(dto.getShowDate());
-		show.setShowTime(dto.getShowTime());
-		show.setScreenNumber(dto.getScreenNumber());
-		repository.save(show);
-		
-		rs.setStatuscode(HttpStatus.CREATED.value());
-		rs.setMessage("movie :"+show.getMovie().getTitle()+" added");
-		rs.setData(show);
-		return new ResponseEntity<ResponseStructure<Show>>(rs,HttpStatus.CREATED);
-		
-	}
+//	public ResponseEntity<ResponseStructure<Show>> addNewShowService(ShowRequestDto dto) {
+//		
+//		ResponseStructure<Show> rs=new ResponseStructure<Show>();
+//		// Find theater
+//		Theater theater = theaterRepository.findById(dto.getTheaterId())
+//		        .orElseThrow(() -> new TheaterNotFoundException());
+//		// Find movie
+//		Movie movie = addMovieRepo.findById(dto.getMovieId())
+//		        .orElseThrow(() -> new MovieNotFoundException());
+//		boolean exists = repository
+//				.existsByTheater_IdAndShowDateAndShowTimeAndScreenNumber(
+//				        dto.getTheaterId(),
+//				        dto.getShowDate(),
+//				        dto.getShowTime(),
+//				        dto.getScreenNumber()
+//				    );
+//
+//			if (exists) {
+//			    throw new ShowAlreadyExistException();
+//			}
+//		// Create a new show
+//		Show show = new Show();
+//
+//		show.setMovie(movie);
+//		show.setTheater(theater);
+//		show.setShowDate(dto.getShowDate());
+//		show.setShowTime(dto.getShowTime());
+//		show.setScreenNumber(dto.getScreenNumber());
+//		repository.save(show);
+//		
+//		rs.setStatuscode(HttpStatus.CREATED.value());
+//		rs.setMessage("movie :"+show.getMovie().getTitle()+" added");
+//		rs.setData(show);
+//		return new ResponseEntity<ResponseStructure<Show>>(rs,HttpStatus.CREATED);
+//		
+//	}
 
 	public ResponseEntity<ResponseStructure<List<Show>>> findallShowService(long theaterid) {
 		Theater theater = theaterRepository.findById(theaterid)
@@ -272,6 +278,113 @@ public class TheaterServices {
 	    rs.setStatuscode(HttpStatus.OK.value());
 	    rs.setMessage("Shows fetched successfully");
 	    rs.setData(shows);
+
+	    return rs;
+	}
+	
+	private List<Seat> generateSeats(Show show, int seatCapacity) {
+
+	    if (seatCapacity <= 0) {
+	        throw new IllegalArgumentException(
+	                "Seat capacity must be greater than zero"
+	        );
+	    }
+
+	    List<Seat> seats = new ArrayList<>();
+
+	    int seatsPerRow = 10;
+	    int totalRows = (int) Math.ceil((double) seatCapacity / seatsPerRow);
+
+	    if (totalRows > 26) {
+	        throw new IllegalArgumentException(
+	                "Maximum supported rows are 26"
+	        );
+	    }
+
+	    int silverRows = (int) Math.ceil(totalRows / 3.0);
+	    int goldRows = (int) Math.ceil(totalRows / 3.0);
+
+	    for (int i = 0; i < seatCapacity; i++) {
+
+	        int rowIndex = i / seatsPerRow;
+	        int seatNumber = (i % seatsPerRow) + 1;
+
+	        String seatNo =
+	                (char) ('A' + rowIndex) + "" + seatNumber;
+
+	        SeatCategory category;
+
+	        if (rowIndex < silverRows) {
+	            category = SeatCategory.SILVER;
+	        } else if (rowIndex < silverRows + goldRows) {
+	            category = SeatCategory.GOLD;
+	        } else {
+	            category = SeatCategory.PREMIUM;
+	        }
+
+	        Seat seat = new Seat(
+	                seatNo,
+	                category,
+	                SeatStatus.AVAILABLE,
+	                show
+	        );
+
+	        seats.add(seat);
+	    }
+
+	    return seats;
+	}
+	
+	public ResponseStructure<Show> addNewShowService(ShowRequestDto dto) {
+
+	    // 1. Fetch theater
+	    Theater theater = theaterRepository.findById(dto.getTheaterId())
+	            .orElseThrow(() -> new TheaterNotFoundException());
+
+	    // 2. Fetch movie
+	    Movie movie = addMovieRepo.findById(dto.getMovieId())
+	            .orElseThrow(() -> new MovieNotFoundException());
+
+	    // 3. Check duplicate show
+	    boolean exists = repository
+	            .existsByTheater_IdAndShowDateAndShowTimeAndScreenNumber(
+	                    dto.getTheaterId(),
+	                    dto.getShowDate(),
+	                    dto.getShowTime(),
+	                    dto.getScreenNumber()
+	            );
+
+	    if (exists) {
+	        throw new ShowAlreadyExistException();
+	    }
+
+	    // 4. Create show
+	    Show show = new Show();
+
+	    show.setMovie(movie);
+	    show.setTheater(theater);
+	    show.setShowDate(dto.getShowDate());
+	    show.setShowTime(dto.getShowTime());
+	    show.setScreenNumber(dto.getScreenNumber());
+
+	    // 5. Generate seats for this show
+	    List<Seat> seats = generateSeats(
+	            show,
+	            dto.getSeatCapacity()
+	    );
+
+	    // 6. Attach seats to show
+	    show.setListSeats(seats);
+
+	    // 7. Save show and seats together
+	    Show savedShow = repository.save(show);
+
+	    // 8. Prepare response
+	    ResponseStructure<Show> rs = new ResponseStructure<>();
+
+	    rs.setStatuscode(HttpStatus.CREATED.value());
+	    rs.setMessage("Show and seats created successfully");
+	    rs.setData(savedShow);
 
 	    return rs;
 	}

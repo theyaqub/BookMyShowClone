@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,10 +48,10 @@ public class TheaterController {
 		return theaterServices.allMovieService();
 	}
 	
-	@PostMapping("/theater/addNewShow")
-	public ResponseEntity<ResponseStructure<Show>> addNewShow(@RequestBody ShowRequestDto dto ) {
-		return theaterServices.addNewShowService(dto);
-	}
+//	@PostMapping("/theater/addNewShow")
+//	public ResponseEntity<ResponseStructure<Show>> addNewShow(@RequestBody ShowRequestDto dto ) {
+//		return theaterServices.addNewShowService(dto);
+//	}
 	
 	@GetMapping("/theater/FindAllShowPlaying")
 	public ResponseEntity<ResponseStructure<List<Show>>> findAllShow(@RequestParam long theaterid) {
@@ -85,5 +86,18 @@ public class TheaterController {
 	                    movieName, language, date
 	            )
 	    );
+	}
+	
+	@PostMapping("/theater/addNewShow")
+	public ResponseEntity<ResponseStructure<Show>> assignSeatToShow(
+            @RequestBody ShowRequestDto dto) {
+
+        ResponseStructure<Show> response =
+                theaterServices.addNewShowService(dto);
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CREATED
+        );
 	}
 }
