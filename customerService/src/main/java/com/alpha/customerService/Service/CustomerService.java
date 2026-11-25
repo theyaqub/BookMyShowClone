@@ -4,15 +4,18 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.alpha.customerService.Controller.Seat;
 import com.alpha.customerService.dto.CustomerDTO;
 import com.alpha.customerService.dto.MovieResponseDTO;
+import com.alpha.customerService.dto.SeatResponseDTO;
 import com.alpha.customerService.entity.Customer;
 import com.alpha.customerService.exception.CustomerAlreadyExistException;
 import com.alpha.customerService.repo.CustomerRepo;
@@ -100,9 +103,19 @@ public class CustomerService {
 	    return response.getBody();
 	}
 
-	public Object SelectSeats(long showId) {
+	public @Nullable List<SeatResponseDTO> SelectSeats(long showId) {
 		// TODO Auto-generated method stub
-		String url="";
+		String url = "http://localhost:8080/theater/selectSeat?showId=" + showId;
+
+		ResponseEntity<ResponseStructure<List<SeatResponseDTO>>> response =
+		        restTemplate.exchange(
+		                url,
+		                HttpMethod.GET,
+		                null,
+		                new ParameterizedTypeReference<ResponseStructure<List<SeatResponseDTO>>>() {}
+		        );
+
+		return response.getBody().getData();
 	}
 
 }

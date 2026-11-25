@@ -2,6 +2,7 @@ package com.alpha.customerService.Controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alpha.customerService.Service.CustomerService;
 import com.alpha.customerService.dto.CustomerDTO;
 import com.alpha.customerService.dto.MovieResponseDTO;
+import com.alpha.customerService.dto.SeatResponseDTO;
 import com.alpha.customerService.entity.Customer;
 import com.alpha.customerService.response.ResponseStructure;
 
@@ -62,5 +64,10 @@ public class CustomerController {
 	                    movieName, language, date
 	            )
 	    );
+	}
+	
+	@GetMapping("/customer/selectSeat")
+	public @Nullable List<SeatResponseDTO> selectSeats(@RequestParam long showId) {
+		return CustomerService.SelectSeats(showId);
 	}
 }
