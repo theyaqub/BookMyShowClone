@@ -27,6 +27,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
             SeatStatus status,
             SeatCategory category
     );
-
+    List<Seat> findByShow_IdAndSeatNoIn(Long showId, List<String> seatNumbers);
+	
 	
 }

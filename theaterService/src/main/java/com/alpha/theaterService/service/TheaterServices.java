@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.alpha.theaterService.dto.BookSeatDto;
 import com.alpha.theaterService.dto.MovieRequestDTO;
 import com.alpha.theaterService.dto.MovieResponseDTO;
 import com.alpha.theaterService.dto.ResponseStructure;
@@ -23,6 +25,7 @@ import com.alpha.theaterService.enums.SeatStatus;
 import com.alpha.theaterService.exception.MovieAlreadyExistException;
 import com.alpha.theaterService.exception.MovieNotFoundException;
 import com.alpha.theaterService.exception.ShowAlreadyExistException;
+import com.alpha.theaterService.exception.ShowNotFoundException;
 import com.alpha.theaterService.exception.TheaterAlreadyExistException;
 import com.alpha.theaterService.exception.TheaterNotFoundException;
 import com.alpha.theaterService.repo.AddressRepository;
@@ -264,14 +267,15 @@ public class TheaterServices {
 	public ResponseStructure<List<Show>> findShowsByMovieDetails(
 	        String movieName,
 	        String language,
-	        LocalDate date) {
+	        LocalDate date,
+	        String city) {
 
-	    List<Show> shows =
-	            repository
-	            .findByMovie_TitleContainingIgnoreCaseAndMovie_LanguageIgnoreCaseAndShowDate(
+	    List<Show> shows = repository
+	            .findByMovie_TitleContainingIgnoreCaseAndMovie_LanguageIgnoreCaseAndShowDateAndTheater_CityIgnoreCase(
 	                    movieName.trim(),
 	                    language.trim(),
-	                    date
+	                    date,
+	                    city.trim()
 	            );
 
 	    ResponseStructure<List<Show>> rs = new ResponseStructure<>();
@@ -402,6 +406,43 @@ public class TheaterServices {
 		rs.setStatuscode(HttpStatus.OK.value());
 		
 		return new ResponseEntity<ResponseStructure<List<Seat>>>(rs,HttpStatus.OK);
+	}
+
+	public ResponseEntity<ResponseStructure<List<String>>> findAllCitiesService() {
+
+	    List<String> cities = theaterRepository.findAllCities();
+
+	    ResponseStructure<List<String>> rs = new ResponseStructure<>();
+
+	    rs.setStatuscode(HttpStatus.OK.value());
+	    rs.setMessage("Cities fetched successfully");
+	    rs.setData(cities);
+
+	    return new ResponseEntity<>(rs, HttpStatus.OK);
+	}
+	
+	@Autowired
+	private  StringRedisTemplate redisTemplate;
+	public void bookSeatService(BookSeatDto bookSeatDto) {
+		// TODO Auto-generated method stub
+		Show show=repository.findById(bookSeatDto.getShowId()).orElseThrow(()->new ShowNotFoundException());
+		List<String> seatNumbers = bookSeatDto.getSeatNo();
+		if (seatNumbers == null || seatNumbers.isEmpty()) {
+		    throw new RuntimeException("Seat numbers cannot be empty");
+		}
+		if (seatNumbers.stream().distinct().count() != seatNumbers.size()) {
+	        throw new RuntimeException("Duplicate seat numbers provided");
+	    }
+		List<Seat> seats = seatRepository.findByShow_IdAndSeatNoIn(
+		        bookSeatDto.getShowId(),
+		        seatNumbers
+		);
+
+		if (seats.size() != seatNumbers.size()) {
+		    throw new RuntimeException("Some seats do not exist for this show");
+		}
+			
+		
 	}
 
 

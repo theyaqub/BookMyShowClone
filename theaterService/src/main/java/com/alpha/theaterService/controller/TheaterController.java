@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.alpha.theaterService.dto.BookSeatDto;
 import com.alpha.theaterService.dto.ResponseStructure;
 import com.alpha.theaterService.dto.ShowRequestDto;
 import com.alpha.theaterService.dto.UpdateShowDto;
@@ -74,17 +76,19 @@ public class TheaterController {
 		return  theaterServices.findMovieByNameService(MovieName);
 	}
 	
-	@GetMapping("theater/findShows")
+
+	@GetMapping("/theater/findShows")
 	public ResponseEntity<ResponseStructure<List<Show>>> findShows(
 	        @RequestParam String movieName,
 	        @RequestParam String language,
+	        @RequestParam String city,
 	        @RequestParam
 	        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	        LocalDate date) {
-		
+
 	    return ResponseEntity.ok(
 	            theaterServices.findShowsByMovieDetails(
-	                    movieName, language, date
+	                    movieName, language, date, city
 	            )
 	    );
 	}
@@ -104,5 +108,15 @@ public class TheaterController {
 	@GetMapping("/theater/selectSeat")
 	public ResponseEntity<ResponseStructure<List<Seat>>> selectSeats(@RequestParam long showId) {
 		return theaterServices.availableSeats(showId);
+	}
+	
+	@GetMapping("/theater/cities")
+	public ResponseEntity<ResponseStructure<List<String>>> getAllCities() {
+	    return theaterServices.findAllCitiesService();
+	}
+	
+	@PostMapping("/theater/lockSeats")
+	public void bookSeat(@RequestBody BookSeatDto bookSeatDto ) {
+		theaterServices.bookSeatService(bookSeatDto);
 	}
 }

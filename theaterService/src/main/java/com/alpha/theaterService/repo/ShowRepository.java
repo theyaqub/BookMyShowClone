@@ -23,9 +23,11 @@ public interface ShowRepository
 			int screenNumber
 			);
 	
-	 public List<Show> findByMovie_TitleContainingIgnoreCaseAndMovie_LanguageIgnoreCaseAndShowDate(
-	            String movieName,
-	            String language,
-	            LocalDate showDate
-	    );
+	public List<Show>
+	findByMovie_TitleContainingIgnoreCaseAndMovie_LanguageIgnoreCaseAndShowDateAndTheater_CityIgnoreCase(
+	        String movieName,
+	        String language,
+	        LocalDate showDate,
+	        String city
+	);
 }
